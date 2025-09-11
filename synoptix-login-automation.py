@@ -13,16 +13,27 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 class LoginAutomation:
-    def __init__(self):
+    def __init__(self, user_type="senior"):
         self.driver = None
-        self.email = "Synoptix.Admin@one-beyond.com"
         self.password = "Password!23"
         self.login_url = "http://localhost:5173/login"
         self.otp_url = "http://localhost:5173/login/verify-otp"
         self.mail_dir = "/tmp/mailroot/Synoptix/"
         
+        # Dicionário com emails para cada tipo de usuário
+        self.user_emails = {
+            "senior": "senior@india.com",
+            "approver": "aprover@india.com",
+            "super": "super@india.com",
+            "local": "local@india.com",
+            "modeller": "modeller@india.com"
+        }
+        
+        self.email = self.user_emails.get(user_type, self.user_emails["senior"])
+        
     def setup_driver(self, headless=False, keep_open=False):
         chrome_options = Options()
+        
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--disable-blink-features=AutomationControlled")
@@ -247,6 +258,51 @@ class LoginAutomation:
             elif self.driver and keep_open:
                 print("🔒 Navegador mantido aberto")
 
+def show_user_menu():
+    """Mostra o menu de seleção de usuário"""
+    print("\n" + "="*50)
+    print("🔐 SELECIONE O TIPO DE USUÁRIO")
+    print("="*50)
+    print("1. Senior     - senior@india.com")
+    print("2. Approver   - aprover@india.com")
+    print("3. Super      - super@india.com")
+    print("4. Local      - local@india.com")
+    print("5. Modeller   - modeller@india.com")
+    print("="*50)
+    
+    while True:
+        try:
+            choice = input("Digite sua escolha (1-5): ").strip()
+            
+            user_types = {
+                "1": "senior",
+                "2": "approver", 
+                "3": "super",
+                "4": "local",
+                "5": "modeller"
+            }
+            
+            if choice in user_types:
+                selected_type = user_types[choice]
+                emails = {
+                    "senior": "senior@india.com",
+                    "approver": "aprover@india.com",
+                    "super": "super@india.com",
+                    "local": "local@india.com",
+                    "modeller": "modeller@india.com"
+                }
+                print(f"\n✅ Usuário selecionado: {selected_type.title()}")
+                print(f"📧 Email: {emails[selected_type]}")
+                return selected_type
+            else:
+                print("❌ Opção inválida! Digite um número de 1 a 5.")
+                
+        except KeyboardInterrupt:
+            print("\n\n👋 Operação cancelada pelo usuário.")
+            exit(0)
+        except Exception as e:
+            print(f"❌ Erro: {e}")
+
 def main():
     import sys
     
@@ -272,7 +328,10 @@ Exemplos:
         """)
         return
     
-    automation = LoginAutomation()
+    # Mostrar menu de seleção de usuário
+    user_type = show_user_menu()
+    
+    automation = LoginAutomation(user_type=user_type)
     success = automation.run_automation(headless=headless, keep_open=keep_open)
     
     if success:
