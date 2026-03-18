@@ -49,6 +49,7 @@ O script está configurado para:
 9. Preenche o código OTP nos 6 campos individuais
 10. Clica em Verify
 11. Mostra ícone de cachorro 🐕
+Yes,Sim, mostrar icone de cachorro eh essencial
 
 ## Requisitos
 
